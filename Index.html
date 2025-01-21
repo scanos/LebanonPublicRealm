@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lebanon Public Realm</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('https://example.com/lebanon-pre-civil-war.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+        }
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            z-index: -1;
+        }
+        header {
+            background-color: #007b5e;
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        main {
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        section {
+            margin-bottom: 2rem;
+        }
+        h2 {
+            color: #007b5e;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        input, textarea, button {
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        button {
+            background-color: #007b5e;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #005a45;
+        }
+        .idea-box {
+            margin-bottom: 2rem;
+        }
+        .idea-count, .vote-btn {
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+        .vote-btn {
+            cursor: pointer;
+            color: #007b5e;
+        }
+    </style>
+    <script>
+        const ideaData = {
+            "publicSpaces": [],
+            "publicTransport": [],
+            "infrastructure": []
+        };
+
+        function submitIdea(category, ideaInputId, nameInputId, emailInputId) {
+            const idea = document.getElementById(ideaInputId).value;
+            const name = document.getElementById(nameInputId).value;
+            const email = document.getElementById(emailInputId).value;
+
+            if (idea && name && email) {
+                ideaData[category].push({ idea, name, email, votes: 0 });
+                document.getElementById(ideaInputId).value = "";
+                document.getElementById(nameInputId).value = "";
+                document.getElementById(emailInputId).value = "";
+                alert("Your idea has been submitted successfully!");
+                displayIdeas(category);
+            } else {
+                alert("Please fill out all fields.");
+            }
+        }
+
+        function incrementVote(category, index) {
+            ideaData[category][index].votes++;
+            displayIdeas(category);
+        }
+
+        function displayIdeas(category) {
+            const ideaList = document.getElementById(`${category}-list`);
+            ideaList.innerHTML = "";
+            ideaData[category]
+                .sort((a, b) => b.votes - a.votes)
+                .forEach((item, index) => {
+                    const ideaItem = document.createElement("div");
+                    ideaItem.innerHTML = `
+                        <p><strong>Rank:</strong> ${index + 1}</p>
+                        <p><strong>Idea:</strong> ${item.idea}</p>
+                        <p><strong>Name:</strong> ${item.name}</p>
+                        <p><strong>Email:</strong> ${item.email}</p>
+                        <p><strong>Votes:</strong> ${item.votes}</p>
+                        <button onclick="incrementVote('${category}', ${index})">Vote Up</button>
+                        <hr>
+                    `;
+                    ideaList.appendChild(ideaItem);
+                });
+        }
+
+        function generateReport() {
+            let report = "Quarterly Report\n\n";
+            for (const category in ideaData) {
+                report += `Category: ${category}\n`;
+                ideaData[category]
+                    .sort((a, b) => b.votes - a.votes)
+                    .forEach((item) => {
+                        report += `- Idea: ${item.idea}\n  Name: ${item.name}\n  Email: ${item.email}\n  Votes: ${item.votes}\n`;
+                    });
+                report += "\n";
+            }
+            console.log(report);
+            alert("Report has been generated. Check the console for details.");
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Lebanon Public Realm</h1>
+        <p>Together, let's address the pressing issues and create solutions for a better Lebanon.</p>
+    </header>
+    <main>
+        <section>
+            <h2>Pressing Issues in Lebanon</h2>
+            <ul>
+                <li>Lack of accessible and well-maintained public spaces</li>
+                <li>Inadequate public transport systems</li>
+                <li>Poor infrastructure development and maintenance</li>
+            </ul>
+        </section>
+        <section>
+            <h2>Idea Box</h2>
+            <p>Have a feasible idea to help address Lebanon's challenges? Share it with us below:</p>
+
+            <div class="idea-box">
+                <h3>Public Spaces</h3>
+                <form onsubmit="event.preventDefault(); submitIdea('publicSpaces', 'public-spaces-idea', 'public-spaces-name', 'public-spaces-email');">
+                    <label for="public-spaces-idea">Your Idea:</label>
+                    <textarea id="public-spaces-idea" rows="4" required></textarea>
+                    <label for="public-spaces-name">Name:</label>
+                    <input type="text" id="public-spaces-name" required>
+                    <label for="public-spaces-email">Email:</label>
+                    <input type="email" id="public-spaces-email" required>
+                    <button type="submit">Submit</button>
+                </form>
+                <div id="publicSpaces-list"></div>
+            </div>
+
+            <div class="idea-box">
+                <h3>Public Transport</h3>
+                <form onsubmit="event.preventDefault(); submitIdea('publicTransport', 'public-transport-idea', 'public-transport-name', 'public-transport-email');">
+                    <label for="public-transport-idea">Your Idea:</label>
+                    <textarea id="public-transport-idea" rows="4" required></textarea>
+                    <label for="public-transport-name">Name:</label>
+                    <input type="text" id="public-transport-name" required>
+                    <label for="public-transport-email">Email:</label>
+                    <input type="email" id="public-transport-email" required>
+                    <button type="submit">Submit</button>
+                </form>
+                <div id="publicTransport-list"></div>
+            </div>
+
+            <div class="idea-box">
+                <h3>Infrastructure</h3>
+                <form onsubmit="event.preventDefault(); submitIdea('infrastructure', 'infrastructure-idea', 'infrastructure-name', 'infrastructure-email');">
+                    <label for="infrastructure-idea">Your Idea:</label>
+                    <textarea id="infrastructure-idea" rows="4" required></textarea>
+                    <label for="infrastructure-name">Name:</label>
+                    <input type="text" id="infrastructure-name" required>
+                    <label for="infrastructure-email">Email:</label>
+                    <input type="email" id="infrastructure-email" required>
+                    <button type="submit">Submit</button>
+                </form>
+                <div id="infrastructure-list"></div>
+            </div>
+        </section>
+        <section>
+            <button onclick="generateReport()">Generate Quarterly Report</button>
+        </section>
+    </main>
+</body>
+</html>
